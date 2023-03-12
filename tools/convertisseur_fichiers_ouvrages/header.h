@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <string.h>
 
 typedef struct livre {
     char code[11];
