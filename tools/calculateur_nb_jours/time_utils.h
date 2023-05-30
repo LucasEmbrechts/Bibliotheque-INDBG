@@ -50,6 +50,10 @@ int calculerNbJours(int dateStartYYYYMMDD, int dateEndYYYYMMDD) {
 	return seconds / 86400;
 }
 
+/*
+* Entrées : aucune
+* Sortie : un entier représentant la date du jour au format YYYYMMDD
+*/
 int obtenirDateYYYYMMDDDuJour(void) {
 	time_t now;
 	struct tm *current_date;
