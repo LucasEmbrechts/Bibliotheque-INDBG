@@ -3,9 +3,9 @@
 #include <time.h>
 #include <stdint.h>
 
-void extractFromYYYYMMDD(int date, int* year, int* month, int* day);
-int calculateNbDays(int dateStartYYYYMMDD, int dateEndYYYYMMDD);
-
+void extraireDepuisDateYYYYMMDD(int date, int* year, int* month, int* day);
+int calculerNbJours(int dateStartYYYYMMDD, int dateEndYYYYMMDD);
+int obtenirDateYYYYMMDDDuJour(void);
 /*
 * Entrées :
 *	- <dateStartYYYYMMDD> : un entier représentant une date au format YYYYMMDD
@@ -13,7 +13,7 @@ int calculateNbDays(int dateStartYYYYMMDD, int dateEndYYYYMMDD);
 * Sorties :
 *	- un entier représentant le nombre de jours entre les deux dates
 */
-int calculateNbDays(int dateStartYYYYMMDD, int dateEndYYYYMMDD) {
+int calculerNbJours(int dateStartYYYYMMDD, int dateEndYYYYMMDD) {
 	time_t now;
 	struct tm date1;
 	struct tm date2;
@@ -28,7 +28,7 @@ int calculateNbDays(int dateStartYYYYMMDD, int dateEndYYYYMMDD) {
 	date2 = *localtime(&now);
 
 
-	extractFromYYYYMMDD(dateStartYYYYMMDD, &extractedYear, &extractedMonth, &extractedDay);
+	extraireDepuisDateYYYYMMDD(dateStartYYYYMMDD, &extractedYear, &extractedMonth, &extractedDay);
 	date1.tm_hour = 0;
 	date1.tm_min = 0;
 	date1.tm_sec = 0;
@@ -37,7 +37,7 @@ int calculateNbDays(int dateStartYYYYMMDD, int dateEndYYYYMMDD) {
 	date1.tm_year = extractedYear - 1900;
 
 
-	extractFromYYYYMMDD(dateEndYYYYMMDD, &extractedYear, &extractedMonth, &extractedDay);
+	extraireDepuisDateYYYYMMDD(dateEndYYYYMMDD, &extractedYear, &extractedMonth, &extractedDay);
 	date2.tm_hour = 0;
 	date2.tm_min = 0;
 	date2.tm_sec = 0;
@@ -50,6 +50,19 @@ int calculateNbDays(int dateStartYYYYMMDD, int dateEndYYYYMMDD) {
 	return seconds / 86400;
 }
 
+int obtenirDateYYYYMMDDDuJour(void) {
+	time_t now;
+	struct tm *current_date;
+	char buffer[9];
+	int dateYYYYMMDD;
+
+	time(&now);
+	current_date = localtime(&now);
+	strftime(buffer, 9, "%Y%m%d", current_date);
+	dateYYYYMMDD = atoi(buffer);
+	return dateYYYYMMDD;
+}
+
 
 /*
 * Entrée: <date>, un entier représentant une date au format YYYYMMDD (ex. 20230405)
@@ -58,6 +71,6 @@ int calculateNbDays(int dateStartYYYYMMDD, int dateEndYYYYMMDD) {
 *	- <month>	: le mois (ex. 4)
 *	- <day>		: le jour (ex. 5)
 */
-void extractFromYYYYMMDD(int date, int* year, int* month, int* day) {
+void extraireDepuisDateYYYYMMDD(int date, int* year, int* month, int* day) {
 	// écrire du code ici...
 }
