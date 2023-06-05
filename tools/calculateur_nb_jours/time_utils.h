@@ -76,5 +76,10 @@ int obtenirDateYYYYMMDDDuJour(void) {
 *	- <day>		: le jour (ex. 5)
 */
 void extraireDepuisDateYYYYMMDD(int date, int* year, int* month, int* day) {
-	// écrire du code ici...
+	
+	*year = date / 10000;
+
+	*month = (date - (*year * 10000)) / 100;
+
+	*day = (date - (*year * 10000) - *month * 100);
 }
