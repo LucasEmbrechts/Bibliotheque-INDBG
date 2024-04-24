@@ -5,12 +5,12 @@
 int main() {
     FILE* pfichierTXT;
     FILE* pfichierDAT;
-    Livre livre;
+    Film livre;
     int nbEnregistrements = 0;
     int nbLectures = 0;
 
-    fopen_s(&pfichierTXT, "ouvrages.txt", "r");
-    fopen_s(&pfichierDAT, "ouvrages.dat", "wb+");
+    fopen_s(&pfichierTXT, "films.txt", "r");
+    fopen_s(&pfichierDAT, "films.dat", "wb+");
 
     char ligne[100];
     char* token;
@@ -22,19 +22,17 @@ int main() {
         return 1;
     }
     fgets(ligne, 100, pfichierTXT);
-    pLigne = ligne + 3;
+    pLigne = ligne;
     while (!feof(pfichierTXT)) {
         token = strtok(pLigne, "|");
-        strcpy_s(livre.code, 11, token);
+        strcpy_s(livre.nomFilm, 200, token);
         token = strtok(NULL, "|");
-        strcpy_s(livre.titre, 100, token);
+        strcpy_s(livre.genres, 200, token);
         token = strtok(NULL, "|");
-        strcpy_s(livre.auteur, 100, token);
+        livre.dureeFilm = atoi(token);
         token = strtok(NULL, "|");
-        livre.date = atoi(token);
-        token = strtok(NULL, "|");
-        strcpy_s(livre.editeur, 50, token);
-        printf("Enregistrement : %s %s %s %d %s", livre.code, livre.titre, livre.auteur, livre.date, livre.editeur);
+        livre.ageMin = atoi(token);
+        printf("Enregistrement : %s %s %d %d", livre.nomFilm, livre.genres, livre.dureeFilm, livre.ageMin);
         fwrite(&livre, sizeof(livre), 1, pfichierDAT);
         nbEnregistrements++;
         fgets(ligne, 100, pfichierTXT);
@@ -44,10 +42,10 @@ int main() {
     fclose(pfichierTXT);
     fclose(pfichierDAT);
 
-    fopen_s(&pfichierDAT, "ouvrages.dat", "rb");
+    fopen_s(&pfichierDAT, "films.dat", "rb");
     fread_s(&livre, sizeof(livre), sizeof(livre), 1, pfichierDAT);
     while (!feof(pfichierDAT)) {
-        printf("Verification : %s %s %s %d %s", livre.code, livre.titre, livre.auteur, livre.date, livre.editeur);
+        printf("Enregistrement : %s %s %d %d", livre.nomFilm, livre.genres, livre.dureeFilm, livre.ageMin);
         fread_s(&livre, sizeof(livre), sizeof(livre), 1, pfichierDAT);
         nbLectures++;
     }

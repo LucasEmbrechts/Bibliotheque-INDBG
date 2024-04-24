@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
+typedef struct salle{
+	int numero;
+	int nbPlaces;
+} Salle;
 
-typedef struct livre {
-    char code[11];
-    char titre[100];
-    char auteur[100];
-    int date;
-    char editeur[50];
-}Livre;
+typedef struct film {
+    char nomFilm[200];
+    char genres[200];
+    int dureeFilm;
+    int ageMin;
+}Film;
