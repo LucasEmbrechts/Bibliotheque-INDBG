@@ -1,0 +1,100 @@
+2266111566|Le monde s'effondre|Chinua Achebe|1958|Gallimard
+2266111567|Contes|Hans Christian Andersen|1835|Gallimard
+2266111568|Orgueil et Préjugés|Jane Austen|1813|Gallimard
+2266111569|Le Père Goriot|Honoré de Balzac|1835|Gallimard
+2266111570|L'Innommable|Samuel Beckett|1953|Gallimard
+2266111571|Décaméron|Boccace|1349|Gallimard
+2266111572|Fictions|Jorge Luis Borges|1944|Gallimard
+2266111573|Les Hauts de Hurlevent|Emily Brontë|1847|Gallimard
+2266111574|L'Étranger|Albert Camus|1942|Gallimard
+2266111575|Les poèmes de...|Paul Celan|1952|Gallimard
+2266111576|Voyage au bout de la nuit|Louis-Ferdinand Céline|1932|Gallimard
+2266111577|Don Quichotte|Miguel de Cervantes|1605|Gallimard
+2266111578|Les Contes de Canterbury|Geoffrey Chaucer|1400|Gallimard
+2266111579|Nostromo|Joseph Conrad|1904|Gallimard
+2266111580|Divine Comédie|Dante Alighieri|1300|Gallimard
+2266111581|Les Grandes Espérances|Charles Dickens|1861|Gallimard
+2266111582|Jacques le fataliste et son maître|Denis Diderot|1796|Gallimard
+2266111583|Berlin Alexanderplatz|Alfred Döblin|1929|Gallimard
+2266111584|Crime et Châtiment|Fiodor Dostoïevski|1866|Gallimard
+2266111585|L'Idiot|Fiodor Dostoïevski|1869|Gallimard
+2266111586|Les Démons|Fiodor Dostoïevski|1872|Gallimard
+2266111587|Les Frères Karamazov|Fiodor Dostoïevski|1880|Gallimard
+2266111588|Middlemarch|George Eliot|1871|Gallimard
+2266111589|Homme invisible, pour qui ?|Ralph Ellison|1952|Gallimard
+2266111590|Médée|Euripide|-431|Gallimard
+2266111591|Absalon, Absalon !|William Faulkner|1936|Gallimard
+2266111592|Le Bruit et la Fureur|William Faulkner|1929|Gallimard
+2266111593|Madame Bovary|Gustave Flaubert|1857|Gallimard
+2266111594|L'Éducation sentimentale|Gustave Flaubert|1869|Gallimard
+2266111595|Romancero gitano|Federico García Lorca|1928|Gallimard
+2266111596|Cent ans de solitude|G.G. Márquez|1967|Gallimard
+2266111597|L'Amour aux temps du choléra|G.G. Márquez|1985|Gallimard
+2266111598|Épopée de Gilgamesh|Anonyme|-1900|Flammarion
+2266111599|Faust|J.W. von Goethe|1808|Bayard
+2266111600|Les Âmes mortes|Nicolas Gogol|1842|Bayard
+2266111601|Le Tambour|Günter Grass|1959|Bayard
+2266111602|Diadorim|João Guimarães Rosa|1956|Bayard
+2266111603|La Faim|Knut Hamsun|1890|Bayard
+2266111604|Le Vieil Homme et la Mer|Ernest Hemingway|1952|Bayard
+2266111605|Iliade|Homère|-850|Bayard
+2266111606|Odyssée|Homère|-850|Bayard
+2266111607|Une maison de poupée|Henrik Ibsen|1879|Bayard
+2266111608|Livre de Job|Anonyme|-600|Bayard
+2266111609|Ulysse|James Joyce|1922|Bayard
+2266111610|Les nouvelles de...|Franz Kafka|1924|Bayard
+2266111611|Le Procès|Franz Kafka|1925|Bayard
+2266111612|Le Château|Franz Kafka|1926|Bayard
+2266111613|La Reconnaissance de Shâkountalâ|Kâlidâsa|-200|Bayard
+2266111614|Le Grondement de la montagne|Yasunari Kawabata|1954|Bayard
+2266111615|Alexis Zorba|Níkos Kazantzákis|1946|Bayard
+2266111616|Amants et Fils|D. H. Lawrence|1913|Bayard
+2266111617|Gens indépendants|Halldór Laxness|1934|Bayard
+2266111618|Les poèmes de...|Giacomo Leopardi|1818|Bayard
+2266111619|Le Carnet d'or|Doris Lessing|1962|Bayard
+2266111620|Fifi Brindacier|Astrid Lindgren|1945|Bayard
+2266111621|Le Journal d'un fou|Lu Xun|1918|Bayard
+2266111622|Mahâbhârata|Anonyme|-300|Bayard
+2266111623|Les Fils de la Médina|Naguib Mahfouz|1959|Bayard
+2266111624|Les Buddenbrook|Thomas Mann|1901|Bayard
+2266111625|La Montagne magique|Thomas Mann|1924|Bayard
+2266111626|Moby Dick|Herman Melville|1851|Flammarion
+2266111627|Les Mille et Une Nuits|Anonyme|800|Flammarion
+2266111628|Essais|Michel de Montaigne|1595|Hachette
+2266111629|La storia|Elsa Morante|1974|Hachette
+2266111630|Beloved|Toni Morrison|1987|Hachette
+2266111631|Le Dit du Genji|Murasaki Shikibu|1000|Hachette
+2266111632|L'Homme sans qualités|Robert Musil|1932|Hachette
+2266111633|Lolita|Vladimir Nabokov|1955|Hachette
+2266111634|Saga de Njáll le Brûlé|Anonyme|1200|Hachette
+2266111635|1984|George Orwell|1949|Hachette
+2266111636|Les Métamorphoses|Ovide|100|Flammarion
+2266111637|Le Livre de l'intranquillité|Fernando Pessoa|1982|Média-Participations
+2266111638|Les Contes d'...|Edgar Allan Poe|1800|Média-Participations
+2266111639|À la recherche du temps perdu|Marcel Proust|1913|Média-Participations
+2266111640|Gargantua et Pantagruel|François Rabelais|1532|Média-Participations
+2266111641|Pedro Páramo|Juan Rulfo|1955|Média-Participations
+2266111642|MasnavîDjalâl ad-Dîn |Rûmî|1200|Média-Participations
+2266111643|Les Enfants de minuit|Salman Rushdie|1981|Média-Participations
+2266111644|Le Jardin des fruits|Saadi|1257|Média-Participations
+2266111645|Saison de la migration|Tayeb Salih|1971|Média-Participations
+2266111646|L'Aveuglement|José Saramago|1995|Média-Participations
+2266111647|Hamlet|William Shakespeare|1603|Média-Participations
+2266111648|Le Roi Lear|William Shakespeare|1608|Média-Participations
+2266111649|Othello ou le Maure de Venise|William Shakespeare|1622|Média-Participations
+2266111650|Œdipe roi|Sophocle|-430|Média-Participations
+2266111651|Le Rouge et le Noir|Stendhal|1830|Média-Participations
+2266111652|Vie et opinions de Tristram|Laurence Sterne|1760|Média-Participations
+2266111653|La Conscience de Zeno|Italo Svevo|1923|Média-Participations
+2266111654|Les Voyages de Gulliver|Jonathan Swift|1726|Média-Participations
+2266111655|Récits divers|Anton Tchekhov|1886|Média-Participations
+2266111656|Guerre et Paix|Léon Tolstoï|1865|Média-Participations
+2266111657|Anna Karénine|Léon Tolstoï|1877|Média-Participations
+2266111658|Les Aventures de Huckleberry Finn|Mark Twain|1884|Média-Participations
+2266111659|Rāmāyana|Valmiki|200|Flammarion
+2266111660|La Mort d'Ivan Ilitch|Léon Tolstoï|188|Flammarion
+2266111661|Énéide|Virgile|-29|Flammarion
+2266111662|Feuilles d'herbe|Walt Whitman|1855|Gallimard
+2266111663|Mrs Dalloway|Virginia Woolf|1925|Gallimard
+2266111664|La Promenade au phare|Virginia Woolf|1927|Gallimard
+2266111665|Mémoires d'Hadrien|Marguerite Yourcenar|1951|Gallimard
