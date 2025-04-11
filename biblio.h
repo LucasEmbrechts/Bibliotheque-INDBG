@@ -85,23 +85,22 @@ bool ouvertureFichiers(void) {
 
 
     // Fichier Emprunts
-    FILE* pTabEmprunts;
-    fopen_s(&pTabEmprunts, NOM_FICHIER_EMPRUNTS, "rb+");
+    FILE* pTabEmprunts =  fopen(NOM_FICHIER_EMPRUNTS, "r+");
+   ;
     if (pTabEmprunts == NULL) {
 
-        fopen_s(&pTabEmprunts, NOM_FICHIER_EMPRUNTS, "ab+");
+        pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "a+");
         fclose(pTabEmprunts);
-        fopen_s(&pTabEmprunts, NOM_FICHIER_EMPRUNTS, "rb+");
+        pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r+");
     }
     fclose(pTabEmprunts);
 
     // Fichiers Membres
-    FILE* pTabMembres;
-    fopen_s(&pTabMembres, NOM_FICHIER_MEMBRES, "rb+");
+    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r+");
     if (pTabMembres == NULL) {
-        fopen_s(&pTabMembres, NOM_FICHIER_MEMBRES, "ab+");
+        pTabMembres = fopen(NOM_FICHIER_MEMBRES, "a+");
         fclose(pTabMembres);
-        fopen_s(&pTabMembres, NOM_FICHIER_MEMBRES, "rb+");
+        pTabMembres = fopen(NOM_FICHIER_EMPRUNTS, "r+");
 
     }
     fclose(pTabMembres);
@@ -109,7 +108,7 @@ bool ouvertureFichiers(void) {
 
     // Fichiers Livres
     FILE* pTabLivres;
-    fopen_s(&pTabLivres, NOM_FICHIER_LIVRES, "rb+");
+    fopen_s(&pTabLivres, NOM_FICHIER_LIVRES, "r+");
     if (pTabLivres == NULL) {
         printf("Fichier Introuvable");
         system("pause");
@@ -134,9 +133,9 @@ Livre obtenirLivre(char isbnRecherche[]) {
 
     // Livre invalide par défaut
     memset(&livreBD, 0, sizeof(Livre));
-    strcpy_s(livreBD.isbn, TAILLE_ISBN, "");
-
-    if (fopen_s(&pTabLivres, NOM_FICHIER_LIVRES, "r") != 0) {
+    strcpy(livreBD.isbn, "");
+    pTabLivres = fopen(NOM_FICHIER_LIVRES, "r");
+    if (pTabLivres == NULL) {
         return livreBD;
     }
     fgets(ligne, sizeof(ligne), pTabLivres);
@@ -145,19 +144,19 @@ Livre obtenirLivre(char isbnRecherche[]) {
 
         // Séparer les champs
         token = strtok(pLigne, "|");
-        strcpy_s(livreBD.isbn, TAILLE_ISBN, token);
+        strcpy(livreBD.isbn, token);
 
         token = strtok(NULL, "|");
-        strcpy_s(livreBD.titre, TAILLE_TITRE, token);
+        strcpy(livreBD.titre, token);
 
         token = strtok(NULL, "|");
-        strcpy_s(livreBD.auteur, TAILLE_AUTEUR, token);
+        strcpy(livreBD.auteur, token);
 
         token = strtok(NULL, "|");
         livreBD.anneeParution = atoi(token);
 
         token = strtok(NULL, "|");
-        strcpy_s(livreBD.editeur, TAILLE_EDITEUR, token, _TRUNCATE);
+        strcpy(livreBD.editeur, token);
 
         // Comparaison de l'ISBN recherché
         if (strcmp(livreBD.isbn, isbnRecherche) == 0) {
@@ -172,7 +171,7 @@ Livre obtenirLivre(char isbnRecherche[]) {
 
     // Si non trouvé
     memset(&livreBD, 0, sizeof(Livre));
-    strcpy_s(livreBD.isbn, TAILLE_ISBN, "");
+    strcpy(livreBD.isbn, "");
     return livreBD;
 }
 
@@ -182,9 +181,9 @@ Livre obtenirLivre(char isbnRecherche[]) {
  * @return true si l'insertion a réussi, false sinon
  */
 bool insererLivre(Livre livreAjout) {
-    FILE* pTabLivres;
+    FILE* pTabLivres = fopen(NOM_FICHIER_LIVRES, "a+");
 
-    if (fopen_s(&pTabLivres, NOM_FICHIER_LIVRES, "a+") != 0) {
+    if (pTabLivres == NULL) {
         return false;
     }
     fwrite(&livreAjout, sizeof(livreAjout), 1, pTabLivres);
@@ -198,18 +197,18 @@ bool insererLivre(Livre livreAjout) {
  * @return true si la suppression a réussi, false sinon
  */
 bool supprimerLivre(char isbn[]) {
-    FILE* pTabLivres;
+    FILE* pTabLivres = fopen(NOM_FICHIER_LIVRES, "r+");
     Livre livreBD;
 
-    if (fopen_s(&pTabLivres, NOM_FICHIER_LIVRES, "r+") != 0) {
+    if ( pTabLivres == NULL) {
         return false;
     }
-    while (fread_s(&livreBD, sizeof(livreBD), sizeof(livreBD), 1, pTabLivres) != 0 && strcmp(isbn, livreBD.isbn) != 0);
+    while (fread(&livreBD, sizeof(livreBD), 1, pTabLivres) != 0 && strcmp(isbn, livreBD.isbn) != 0);
     if (feof(pTabLivres)) {
         fclose(pTabLivres);
         return false;
     }
-    strcpy_s(livreBD.isbn, TAILLE_ISBN, "***");
+    strcpy(livreBD.isbn, "***");
     fseek(pTabLivres, -1 * (long)sizeof(livreBD), SEEK_CUR);
     fwrite(&livreBD, sizeof(livreBD), 1, pTabLivres);
     fclose(pTabLivres);
@@ -221,13 +220,13 @@ bool supprimerLivre(char isbn[]) {
  * @return true si la modification a réussi, false sinon
  */
 bool modifierLivre(Livre livre) {
-    FILE* pTabLivres;
-    Livre livreBD;
+    FILE* pTabLivres = fopen(NOM_FICHIER_LIVRES, "r+");
+    Livre livreBD ;
 
-    if (fopen_s(&pTabLivres, NOM_FICHIER_LIVRES, "r+") != 0) {
+    if (pTabLivres == NULL) {
         return false;
     }
-    while (fread_s(&livreBD, sizeof(livreBD), sizeof(livreBD), 1, pTabLivres) != 0 && strcmp(livre.isbn, livreBD.isbn) != 0);
+    while (fread(&livreBD, sizeof(livreBD), 1, pTabLivres) != 0 && strcmp(livre.isbn, livreBD.isbn) != 0);
     if (feof(pTabLivres)) {
         fclose(pTabLivres);
         return false;
@@ -245,19 +244,19 @@ bool modifierLivre(Livre livre) {
  * @return L'emprunt trouvé ou un emprunt "invalide" si non trouvé
  */
 Emprunt obtenirEmprunt(char isbn[], int numMembre) {
-    FILE* pTabEmprunts;
+    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r+");
     Emprunt empruntBD;
 
     // Initialisation d'un emprunt "invalide"
     memset(&empruntBD, 0, sizeof(empruntBD));
-    strcpy_s(empruntBD.isbn, TAILLE_ISBN, ""); // ISBN vide pour indiquer une erreur
+    strcpy(empruntBD.isbn, ""); // ISBN vide pour indiquer une erreur
     empruntBD.numMembre = 0;
 
-    if (fopen_s(&pTabEmprunts, NOM_FICHIER_EMPRUNTS, "r+") != 0) {
+    if (pTabEmprunts == NULL) {
         return empruntBD;
     }
 
-    while (fread_s(&empruntBD, sizeof(empruntBD), sizeof(empruntBD), 1, pTabEmprunts) != 0) {
+    while (fread(&empruntBD, sizeof(empruntBD), 1, pTabEmprunts) != 0) {
         if (strcmp(isbn, empruntBD.isbn) == 0 && numMembre == empruntBD.numMembre) {
             fclose(pTabEmprunts);
             return empruntBD;
@@ -266,7 +265,7 @@ Emprunt obtenirEmprunt(char isbn[], int numMembre) {
 
     // Réinitialiser à un emprunt "invalide"
     memset(&empruntBD, 0, sizeof(empruntBD));
-    strcpy_s(empruntBD.isbn, TAILLE_ISBN, "");
+    strcpy(empruntBD.isbn, "");
     empruntBD.numMembre = 0;
 
     fclose(pTabEmprunts);
@@ -279,9 +278,9 @@ Emprunt obtenirEmprunt(char isbn[], int numMembre) {
  * @return true si l'insertion a réussi, false sinon
  */
 bool insererEmprunt(Emprunt empruntAjout) {
-    FILE* pTabEmprunts;
+    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "a+");
 
-    if (fopen_s(&pTabEmprunts, NOM_FICHIER_EMPRUNTS, "a+") != 0) {
+    if (pTabEmprunts == NULL) {
         return false;
     }
 
@@ -297,14 +296,14 @@ bool insererEmprunt(Emprunt empruntAjout) {
  * @return true si la suppression a réussi, false sinon
  */
 bool supprimerEmprunt(char isbn[], int numMembre) {
-    FILE* pTabEmprunts;
+    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r+");
     Emprunt empruntBD;
 
-    if (fopen_s(&pTabEmprunts, NOM_FICHIER_EMPRUNTS, "r+") != 0) {
+    if (pTabEmprunts == NULL) {
         return false;
     }
 
-    while (fread_s(&empruntBD, sizeof(empruntBD), sizeof(empruntBD), 1, pTabEmprunts) != 0) {
+    while (fread(&empruntBD, sizeof(empruntBD), 1, pTabEmprunts) != 0) {
         if (strcmp(isbn, empruntBD.isbn) == 0 && numMembre == empruntBD.numMembre) {
             break;
         }
@@ -316,7 +315,7 @@ bool supprimerEmprunt(char isbn[], int numMembre) {
     }
 
     // Marquer l'emprunt comme supprimé
-    strcpy_s(empruntBD.isbn, TAILLE_ISBN, "***");
+    strcpy(empruntBD.isbn, "***");
     empruntBD.numMembre = -1;
 
     fseek(pTabEmprunts, -1 * (long)sizeof(empruntBD), SEEK_CUR);
@@ -331,14 +330,14 @@ bool supprimerEmprunt(char isbn[], int numMembre) {
  * @return true si la modification a réussi, false sinon
  */
 bool modifierEmprunt(Emprunt emprunt) {
-    FILE* pTabEmprunts;
+    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r+");
     Emprunt empruntBD;
 
-    if (fopen_s(&pTabEmprunts, NOM_FICHIER_EMPRUNTS, "r+") != 0) {
+    if ( pTabEmprunts == NULL) {
         return false;
     }
 
-    while (fread_s(&empruntBD, sizeof(empruntBD), sizeof(empruntBD), 1, pTabEmprunts) != 0) {
+    while (fread(&empruntBD, sizeof(empruntBD), 1, pTabEmprunts) != 0) {
         if (strcmp(emprunt.isbn, empruntBD.isbn) == 0 && emprunt.numMembre == empruntBD.numMembre) {
             break;
         }
@@ -362,26 +361,26 @@ bool modifierEmprunt(Emprunt emprunt) {
  * @return Le membre trouvé ou un membre "invalide" si non trouvé
  */
 Membre obtenirMembre(int numMembre) {
-    FILE* pTabMembres;
+    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r+");
     Membre membreBD;
 
     // Initialisation d'un membre "invalide"
     memset(&membreBD, 0, sizeof(membreBD));
     membreBD.numMembre = 0;
-    strcpy_s(membreBD.nom, TAILLE_NOM, "");
+    strcpy(membreBD.nom, "");
 
-    if (fopen_s(&pTabMembres, NOM_FICHIER_MEMBRES, "r+") != 0) {
+    if (pTabMembres != NULL) {
         return membreBD;
     }
 
-    while (fread_s(&membreBD, sizeof(membreBD), sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != numMembre);
+    while (fread(&membreBD, sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != numMembre);
 
     if (feof(pTabMembres)) {
         fclose(pTabMembres);
         // Réinitialiser à un membre "invalide"
         memset(&membreBD, 0, sizeof(membreBD));
         membreBD.numMembre = 0;
-        strcpy_s(membreBD.nom, TAILLE_NOM, "");
+        strcpy(membreBD.nom, "");
         return membreBD;
     }
 
@@ -395,9 +394,9 @@ Membre obtenirMembre(int numMembre) {
  * @return true si l'insertion a réussi, false sinon
  */
 bool insererMembre(Membre membreAjout) {
-    FILE* pTabMembres;
+    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "a+");
 
-    if (fopen_s(&pTabMembres, NOM_FICHIER_MEMBRES, "a+") != 0) {
+    if (pTabMembres == NULL) {
         return false;
     }
 
@@ -412,21 +411,21 @@ bool insererMembre(Membre membreAjout) {
  * @return true si la suppression a réussi, false sinon
  */
 bool supprimerMembre(int numMembre) {
-    FILE* pTabMembres;
+    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r+");
     Membre membreBD;
 
-    if (fopen_s(&pTabMembres, NOM_FICHIER_MEMBRES, "r+") != 0) {
+    if (pTabMembres == NULL) {
         return false;
     }
 
-    while (fread_s(&membreBD, sizeof(membreBD), sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != numMembre);
+    while (fread(&membreBD, sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != numMembre);
 
     if (feof(pTabMembres)) {
         fclose(pTabMembres);
         return false;
     }
 
-    strcpy_s(membreBD.nom, TAILLE_NOM, "***");
+    strcpy(membreBD.nom, "***");
     fseek(pTabMembres, -1 * (long)sizeof(membreBD), SEEK_CUR);
     fwrite(&membreBD, sizeof(membreBD), 1, pTabMembres);
     fclose(pTabMembres);
@@ -439,14 +438,14 @@ bool supprimerMembre(int numMembre) {
  * @return true si la modification a réussi, false sinon
  */
 bool modifierMembre(Membre membre) {
-    FILE* pTabMembres;
+    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r+");
     Membre membreBD;
 
-    if (fopen_s(&pTabMembres, NOM_FICHIER_MEMBRES, "r+") != 0) {
+    if (pTabMembres == NULL) {
         return false;
     }
 
-    while (fread_s(&membreBD, sizeof(membreBD), sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != membre.numMembre);
+    while (fread(&membreBD, sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != membre.numMembre);
 
     if (feof(pTabMembres)) {
         fclose(pTabMembres);
