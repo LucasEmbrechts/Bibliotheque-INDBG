@@ -15,9 +15,6 @@
 #define TAILLE_NOM 100
 #define TAILLE_PRENOM 100
 #define TAILLE_ADRESSE 100
-#define TAILLE_DONNEES 5
-#define TAILLE_RECHERCHE 100
-#define TAILLE_STATUT 20
 
 #define NOM_FICHIER_EMPRUNTS "emprunts.txt"
 #define NOM_FICHIER_MEMBRES "membres.txt"
