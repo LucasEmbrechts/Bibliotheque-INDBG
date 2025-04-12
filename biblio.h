@@ -107,8 +107,7 @@ bool ouvertureFichiers(void) {
 
 
     // Fichiers Livres
-    FILE* pTabLivres;
-    fopen_s(&pTabLivres, NOM_FICHIER_LIVRES, "r+");
+    FILE* pTabLivres = fopen(NOM_FICHIER_LIVRES, "r+");
     if (pTabLivres == NULL) {
         printf("Fichier Introuvable");
         system("pause");
@@ -127,7 +126,7 @@ bool ouvertureFichiers(void) {
 Livre obtenirLivre(char isbnRecherche[]) {
     FILE* pTabLivres;
     Livre livreBD;
-    char ligne[100];
+    char ligne[256];
     char* token;
     char* pLigne;
 
@@ -186,7 +185,12 @@ bool insererLivre(Livre livreAjout) {
     if (pTabLivres == NULL) {
         return false;
     }
-    fwrite(&livreAjout, sizeof(livreAjout), 1, pTabLivres);
+    fprintf(pTabLivres, "%s|%s|%s|%d|%s\n",
+        livreAjout.isbn,
+        livreAjout.titre,
+        livreAjout.auteur,
+        livreAjout.anneeParution,
+        livreAjout.editeur);
     fclose(pTabLivres);
     return true;
 }
@@ -198,21 +202,43 @@ bool insererLivre(Livre livreAjout) {
  */
 bool supprimerLivre(char isbn[]) {
     FILE* pTabLivres = fopen(NOM_FICHIER_LIVRES, "r+");
-    Livre livreBD;
+    FILE* pTemp = fopen("temp.txt", "w");
+    char ligne[256];
+    bool livreSupprime = false;
 
-    if ( pTabLivres == NULL) {
+    if (pTabLivres == NULL || pTemp == NULL) {
+        if (pTabLivres) fclose(pTabLivres);
+        if (pTemp) fclose(pTemp);
         return false;
     }
-    while (fread(&livreBD, sizeof(livreBD), 1, pTabLivres) != 0 && strcmp(isbn, livreBD.isbn) != 0);
-    if (feof(pTabLivres)) {
-        fclose(pTabLivres);
-        return false;
+
+    // Lire chaque ligne du fichier original
+    while (fgets(ligne, sizeof(ligne), pTabLivres)) {
+        char isbnLigne[TAILLE_ISBN];
+        sscanf(ligne, "%[^|]", isbnLigne); // Extraire l'ISBN de la ligne
+
+        // Si l'ISBN ne correspond pas, écrire la ligne dans le fichier temporaire
+        if (strcmp(isbnLigne, isbn) != 0) {
+            fputs(ligne, pTemp);
+        } else {
+            livreSupprime = true; // Marquer que le livre a été supprimé
+        }
     }
-    strcpy(livreBD.isbn, "***");
-    fseek(pTabLivres, -1 * (long)sizeof(livreBD), SEEK_CUR);
-    fwrite(&livreBD, sizeof(livreBD), 1, pTabLivres);
+
     fclose(pTabLivres);
-    return true;
+    fclose(pTemp);
+
+    // Remplacer le fichier original par le fichier temporaire
+    if (livreSupprime) {
+        if (remove(NOM_FICHIER_LIVRES) != 0 || rename("temp.txt", NOM_FICHIER_LIVRES) != 0) {
+            return false;
+        }
+    } else {
+        // Si aucun livre n'a été supprimé, supprimer le fichier temporaire
+        remove("temp.txt");
+    }
+
+    return livreSupprime;
 }
 /**
  * Modifie un emprunt dans le fichier des emprunts
@@ -221,20 +247,50 @@ bool supprimerLivre(char isbn[]) {
  */
 bool modifierLivre(Livre livre) {
     FILE* pTabLivres = fopen(NOM_FICHIER_LIVRES, "r+");
-    Livre livreBD ;
+    FILE* pTemp = fopen("temp.txt", "w");
+    char ligne[256];
+    bool livreModifie = false;
 
-    if (pTabLivres == NULL) {
+    if (pTabLivres == NULL || pTemp == NULL) {
+        if (pTabLivres) fclose(pTabLivres);
+        if (pTemp) fclose(pTemp);
         return false;
     }
-    while (fread(&livreBD, sizeof(livreBD), 1, pTabLivres) != 0 && strcmp(livre.isbn, livreBD.isbn) != 0);
-    if (feof(pTabLivres)) {
-        fclose(pTabLivres);
-        return false;
+
+    // Lire chaque ligne du fichier original
+    while (fgets(ligne, sizeof(ligne), pTabLivres)) {
+        char isbnLigne[TAILLE_ISBN];
+        sscanf(ligne, "%[^|]", isbnLigne); // Extraire l'ISBN de la ligne
+
+        // Si l'ISBN correspond, écrire les nouvelles données
+        if (strcmp(isbnLigne, livre.isbn) == 0) {
+            fprintf(pTemp, "%s|%s|%s|%d|%s\n",
+                    livre.isbn,
+                    livre.titre,
+                    livre.auteur,
+                    livre.anneeParution,
+                    livre.editeur);
+            livreModifie = true;
+        } else {
+            // Sinon, copier la ligne telle quelle
+            fputs(ligne, pTemp);
+        }
     }
-    fseek(pTabLivres, -1 * (long)sizeof(livreBD), SEEK_CUR);
-    fwrite(&livre, sizeof(livre), 1, pTabLivres);
+
     fclose(pTabLivres);
-    return true;
+    fclose(pTemp);
+
+    // Remplacer le fichier original par le fichier temporaire
+    if (livreModifie) {
+        if (remove(NOM_FICHIER_LIVRES) != 0 || rename("temp.txt", NOM_FICHIER_LIVRES) != 0) {
+            return false;
+        }
+    } else {
+        // Si aucun livre n'a été modifié, supprimer le fichier temporaire
+        remove("temp.txt");
+    }
+
+    return livreModifie;
 }
 
 /**
