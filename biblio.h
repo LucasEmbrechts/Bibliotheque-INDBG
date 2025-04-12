@@ -86,7 +86,6 @@ bool ouvertureFichiers(void) {
 
     // Fichier Emprunts
     FILE* pTabEmprunts =  fopen(NOM_FICHIER_EMPRUNTS, "r+");
-   ;
     if (pTabEmprunts == NULL) {
 
         pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "a+");

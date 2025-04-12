@@ -11,7 +11,7 @@
 2266111576|Voyage au bout de la nuit|Louis-Ferdinand Céline|1932|Gallimard
 2266111577|Don Quichotte|Miguel de Cervantes|1605|Gallimard
 2266111578|Les Contes de Canterbury|Geoffrey Chaucer|1400|Gallimard
-2266111579|Nostromo|Joseph Conrad|1904|Gallimard
+2266111579|Nostradamus|Joseph Conrad|1903|Gallimard
 2266111580|Divine Comédie|Dante Alighieri|1300|Gallimard
 2266111581|Les Grandes Espérances|Charles Dickens|1861|Gallimard
 2266111582|Jacques le fataliste et son maître|Denis Diderot|1796|Gallimard
@@ -98,3 +98,4 @@
 2266111663|Mrs Dalloway|Virginia Woolf|1925|Gallimard
 2266111664|La Promenade au phare|Virginia Woolf|1927|Gallimard
 2266111665|Mémoires d'Hadrien|Marguerite Yourcenar|1951|Gallimard
+2266111579|Nostradamus|Joseph Conrad|1903|Gallimard
