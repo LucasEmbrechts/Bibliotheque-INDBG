@@ -1,4 +1,24 @@
-//#define _CRT_SECURE_NO_WARNINGS
+#pragma once
+
+/*
+* Gestion d'une bibliothèque
+* Ce fichier contient les définitions de structures et de fonctions
+* pour gérer les livres, les emprunts et les membres d'une bibliothèque.
+* Il inclut des fonctions pour ouvrir des fichiers, obtenir des livres,
+* insérer, supprimer et modifier des livres, emprunts et membres,
+* ainsi que des fonctions utilitaires pour manipuler des dates.
+* @author Lucas Embrechts
+* @date 2025-04-13
+* @note Les fichiers utilisés sont : emprunts.txt, membres.txt et ouvrages.txt.
+* @note Le fichier ouvrages.txt est structuré de la manière suivante :
+*       isbn|titre|auteur|anneeParution|editeur
+* @note Le fichier emprunts.txt est structuré de la manière suivante :
+*       isbn|numMembre|dateEmprunt
+* @note Le fichier membres.txt est structuré de la manière suivante :
+*       numMembre|nomPrenom|adresse|dateAdhesion
+* @warning Les fichiers doivent être encodés au format UTF-8 sans BOM.
+* @warning Le fichier ouvrages.txt doit terminer par une nouvelle ligne.
+*/
 
 #include <stdbool.h>
 #include <string.h>
@@ -6,6 +26,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdint.h>
 
 
 #define TAILLE_ISBN 11
@@ -43,8 +64,7 @@ typedef struct emprunt Emprunt;
 
 struct membre {
     int numMembre;
-    char nom[TAILLE_NOM];
-    char prenom[TAILLE_PRENOM];
+    char nomPrenom[TAILLE_NOM];
     char adresse[TAILLE_ADRESSE];
     int dateAdhesion;
 };
@@ -65,23 +85,15 @@ bool insererMembre(Membre membreAjout);
 bool supprimerMembre(int numMembre);
 bool modifierMembre(Membre membre);
 
-/**
- * Obtient l'année courante
- * @return L'année actuelle du système
- */
-int obtenirAnneeActuelle(void) {
-    time_t now;
-    struct tm current_time;
-    time(&now);
-    current_time = *localtime(&now);
+int calculerNbJours(int dateStartYYYYMMDD, int dateEndYYYYMMDD);
+int extraireJourDDDepuisDateYYYYMMDD(int date);
+int extraireMoisMMDepuisDateYYYYMMDD(int date);
+int extraireAnneeYYYYDepuisDateYYYYMMDD(int date);
 
-    return current_time.tm_year + 1900;
-}
 
 bool ouvertureFichiers(void) {
 
 
-    // Fichier Emprunts
     FILE* pTabEmprunts =  fopen(NOM_FICHIER_EMPRUNTS, "r+");
     if (pTabEmprunts == NULL) {
 
@@ -91,7 +103,6 @@ bool ouvertureFichiers(void) {
     }
     fclose(pTabEmprunts);
 
-    // Fichiers Membres
     FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r+");
     if (pTabMembres == NULL) {
         pTabMembres = fopen(NOM_FICHIER_MEMBRES, "a+");
@@ -102,7 +113,6 @@ bool ouvertureFichiers(void) {
     fclose(pTabMembres);
 
 
-    // Fichiers Livres
     FILE* pTabLivres = fopen(NOM_FICHIER_LIVRES, "r+");
     if (pTabLivres == NULL) {
         printf("Fichier Introuvable");
@@ -126,7 +136,6 @@ Livre obtenirLivre(char isbnRecherche[]) {
     char* token;
     char* pLigne;
 
-    // Livre invalide par défaut
     memset(&livreBD, 0, sizeof(Livre));
     strcpy(livreBD.isbn, "");
     pTabLivres = fopen(NOM_FICHIER_LIVRES, "r");
@@ -137,7 +146,6 @@ Livre obtenirLivre(char isbnRecherche[]) {
     pLigne = ligne;
     while (!feof(pTabLivres)) {
 
-        // Séparer les champs
         token = strtok(pLigne, "|");
         strcpy(livreBD.isbn, token);
 
@@ -153,7 +161,6 @@ Livre obtenirLivre(char isbnRecherche[]) {
         token = strtok(NULL, "|");
         strcpy(livreBD.editeur, token);
 
-        // Comparaison de l'ISBN recherché
         if (strcmp(livreBD.isbn, isbnRecherche) == 0) {
             fclose(pTabLivres);
             return livreBD;
@@ -164,7 +171,6 @@ Livre obtenirLivre(char isbnRecherche[]) {
 
     fclose(pTabLivres);
 
-    // Si non trouvé
     memset(&livreBD, 0, sizeof(Livre));
     strcpy(livreBD.isbn, "");
     return livreBD;
@@ -208,29 +214,25 @@ bool supprimerLivre(char isbn[]) {
         return false;
     }
 
-    // Lire chaque ligne du fichier original
     while (fgets(ligne, sizeof(ligne), pTabLivres)) {
         char isbnLigne[TAILLE_ISBN];
-        sscanf(ligne, "%[^|]", isbnLigne); // Extraire l'ISBN de la ligne
+        sscanf(ligne, "%[^|]", isbnLigne);
 
-        // Si l'ISBN ne correspond pas, écrire la ligne dans le fichier temporaire
         if (strcmp(isbnLigne, isbn) != 0) {
             fputs(ligne, pTemp);
         } else {
-            livreSupprime = true; // Marquer que le livre a été supprimé
+            livreSupprime = true;
         }
     }
 
     fclose(pTabLivres);
     fclose(pTemp);
 
-    // Remplacer le fichier original par le fichier temporaire
     if (livreSupprime) {
         if (remove(NOM_FICHIER_LIVRES) != 0 || rename("temp.txt", NOM_FICHIER_LIVRES) != 0) {
             return false;
         }
     } else {
-        // Si aucun livre n'a été supprimé, supprimer le fichier temporaire
         remove("temp.txt");
     }
 
@@ -253,12 +255,10 @@ bool modifierLivre(Livre livre) {
         return false;
     }
 
-    // Lire chaque ligne du fichier original
     while (fgets(ligne, sizeof(ligne), pTabLivres)) {
         char isbnLigne[TAILLE_ISBN];
-        sscanf(ligne, "%[^|]", isbnLigne); // Extraire l'ISBN de la ligne
+        sscanf(ligne, "%[^|]", isbnLigne);
 
-        // Si l'ISBN correspond, écrire les nouvelles données
         if (strcmp(isbnLigne, livre.isbn) == 0) {
             fprintf(pTemp, "%s|%s|%s|%d|%s\n",
                     livre.isbn,
@@ -268,7 +268,6 @@ bool modifierLivre(Livre livre) {
                     livre.editeur);
             livreModifie = true;
         } else {
-            // Sinon, copier la ligne telle quelle
             fputs(ligne, pTemp);
         }
     }
@@ -276,13 +275,11 @@ bool modifierLivre(Livre livre) {
     fclose(pTabLivres);
     fclose(pTemp);
 
-    // Remplacer le fichier original par le fichier temporaire
     if (livreModifie) {
         if (remove(NOM_FICHIER_LIVRES) != 0 || rename("temp.txt", NOM_FICHIER_LIVRES) != 0) {
             return false;
         }
     } else {
-        // Si aucun livre n'a été modifié, supprimer le fichier temporaire
         remove("temp.txt");
     }
 
@@ -295,32 +292,48 @@ bool modifierLivre(Livre livre) {
  * @param numMembre Le numéro du membre qui a emprunté le livre
  * @return L'emprunt trouvé ou un emprunt "invalide" si non trouvé
  */
-Emprunt obtenirEmprunt(char isbn[], int numMembre) {
-    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r+");
+Emprunt obtenirEmprunt(char isbnRecherche[], int numMembreRecherche) {
+    FILE* pTabEmprunts;
     Emprunt empruntBD;
+    char ligne[256];
+    char* token;
+    char* pLigne;
 
-    // Initialisation d'un emprunt "invalide"
-    memset(&empruntBD, 0, sizeof(empruntBD));
-    strcpy(empruntBD.isbn, ""); // ISBN vide pour indiquer une erreur
-    empruntBD.numMembre = 0;
+    memset(&empruntBD, 0, sizeof(Emprunt));
+    strcpy(empruntBD.isbn, "");
+    empruntBD.numMembre = -1;
 
+    pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r");
     if (pTabEmprunts == NULL) {
         return empruntBD;
     }
 
-    while (fread(&empruntBD, sizeof(empruntBD), 1, pTabEmprunts) != 0) {
-        if (strcmp(isbn, empruntBD.isbn) == 0 && numMembre == empruntBD.numMembre) {
+    fgets(ligne, sizeof(ligne), pTabEmprunts);
+    pLigne = ligne;
+    while (!feof(pTabEmprunts)) {
+        token = strtok(pLigne, "|");
+        strcpy(empruntBD.isbn, token);
+
+        token = strtok(NULL, "|");
+        empruntBD.numMembre = atoi(token);
+
+        token = strtok(NULL, "|");
+        empruntBD.dateEmprunt = atoi(token);
+
+        if (strcmp(empruntBD.isbn, isbnRecherche) == 0 && empruntBD.numMembre == numMembreRecherche) {
             fclose(pTabEmprunts);
             return empruntBD;
         }
+
+        fgets(ligne, sizeof(ligne), pTabEmprunts);
+        pLigne = ligne;
     }
 
-    // Réinitialiser à un emprunt "invalide"
-    memset(&empruntBD, 0, sizeof(empruntBD));
-    strcpy(empruntBD.isbn, "");
-    empruntBD.numMembre = 0;
-
     fclose(pTabEmprunts);
+
+    memset(&empruntBD, 0, sizeof(Emprunt));
+    strcpy(empruntBD.isbn, "");
+    empruntBD.numMembre = -1;
     return empruntBD;
 }
 
@@ -330,13 +343,17 @@ Emprunt obtenirEmprunt(char isbn[], int numMembre) {
  * @return true si l'insertion a réussi, false sinon
  */
 bool insererEmprunt(Emprunt empruntAjout) {
-    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "a+");
+    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "a");
 
     if (pTabEmprunts == NULL) {
         return false;
     }
 
-    fwrite(&empruntAjout, sizeof(empruntAjout), 1, pTabEmprunts);
+    fprintf(pTabEmprunts, "%s|%d|%d\n",
+            empruntAjout.isbn,
+            empruntAjout.numMembre,
+            empruntAjout.dateEmprunt);
+
     fclose(pTabEmprunts);
     return true;
 }
@@ -348,32 +365,41 @@ bool insererEmprunt(Emprunt empruntAjout) {
  * @return true si la suppression a réussi, false sinon
  */
 bool supprimerEmprunt(char isbn[], int numMembre) {
-    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r+");
-    Emprunt empruntBD;
+    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r");
+    FILE* pTemp = fopen("temp.txt", "w");
+    char ligne[256];
+    bool empruntSupprime = false;
 
-    if (pTabEmprunts == NULL) {
+    if (pTabEmprunts == NULL || pTemp == NULL) {
+        if (pTabEmprunts) fclose(pTabEmprunts);
+        if (pTemp) fclose(pTemp);
         return false;
     }
 
-    while (fread(&empruntBD, sizeof(empruntBD), 1, pTabEmprunts) != 0) {
-        if (strcmp(isbn, empruntBD.isbn) == 0 && numMembre == empruntBD.numMembre) {
-            break;
+    while (fgets(ligne, sizeof(ligne), pTabEmprunts)) {
+        char isbnLigne[TAILLE_ISBN];
+        int numMembreLigne;
+        sscanf(ligne, "%[^|]|%d|", isbnLigne, &numMembreLigne);
+
+        if (strcmp(isbnLigne, isbn) != 0 || numMembreLigne != numMembre) {
+            fputs(ligne, pTemp);
+        } else {
+            empruntSupprime = true;
         }
     }
 
-    if (feof(pTabEmprunts)) {
-        fclose(pTabEmprunts);
-        return false;
+    fclose(pTabEmprunts);
+    fclose(pTemp);
+
+    if (empruntSupprime) {
+        if (remove(NOM_FICHIER_EMPRUNTS) != 0 || rename("temp.txt", NOM_FICHIER_EMPRUNTS) != 0) {
+            return false;
+        }
+    } else {
+        remove("temp.txt");
     }
 
-    // Marquer l'emprunt comme supprimé
-    strcpy(empruntBD.isbn, "***");
-    empruntBD.numMembre = -1;
-
-    fseek(pTabEmprunts, -1 * (long)sizeof(empruntBD), SEEK_CUR);
-    fwrite(&empruntBD, sizeof(empruntBD), 1, pTabEmprunts);
-    fclose(pTabEmprunts);
-    return true;
+    return empruntSupprime;
 }
 
 /**
@@ -382,61 +408,94 @@ bool supprimerEmprunt(char isbn[], int numMembre) {
  * @return true si la modification a réussi, false sinon
  */
 bool modifierEmprunt(Emprunt emprunt) {
-    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r+");
-    Emprunt empruntBD;
+    FILE* pTabEmprunts = fopen(NOM_FICHIER_EMPRUNTS, "r");
+    FILE* pTemp = fopen("temp.txt", "w");
+    char ligne[256];
+    bool empruntModifie = false;
 
-    if ( pTabEmprunts == NULL) {
+    if (pTabEmprunts == NULL || pTemp == NULL) {
+        if (pTabEmprunts) fclose(pTabEmprunts);
+        if (pTemp) fclose(pTemp);
         return false;
     }
 
-    while (fread(&empruntBD, sizeof(empruntBD), 1, pTabEmprunts) != 0) {
-        if (strcmp(emprunt.isbn, empruntBD.isbn) == 0 && emprunt.numMembre == empruntBD.numMembre) {
-            break;
+    while (fgets(ligne, sizeof(ligne), pTabEmprunts)) {
+        char isbnLigne[TAILLE_ISBN];
+        int numMembreLigne;
+        sscanf(ligne, "%[^|]|%d|", isbnLigne, &numMembreLigne);
+
+        if (strcmp(isbnLigne, emprunt.isbn) == 0 && numMembreLigne == emprunt.numMembre) {
+            fprintf(pTemp, "%s|%d|%d\n",
+                    emprunt.isbn,
+                    emprunt.numMembre,
+                    emprunt.dateEmprunt);
+            empruntModifie = true;
+        } else {
+            fputs(ligne, pTemp);
         }
     }
 
-    if (feof(pTabEmprunts)) {
-        fclose(pTabEmprunts);
-        return false;
+    fclose(pTabEmprunts);
+    fclose(pTemp);
+
+    if (empruntModifie) {
+        if (remove(NOM_FICHIER_EMPRUNTS) != 0 || rename("temp.txt", NOM_FICHIER_EMPRUNTS) != 0) {
+            return false;
+        }
+    } else {
+        remove("temp.txt");
     }
 
-    fseek(pTabEmprunts, -1 * (long)sizeof(empruntBD), SEEK_CUR);
-    fwrite(&emprunt, sizeof(emprunt), 1, pTabEmprunts);
-    fclose(pTabEmprunts);
-    return true;
+    return empruntModifie;
 }
-
 
 /**
  * Obtient un membre à partir de son numéro
- * @param numMembre Le numéro du membre à chercher
+ * @param numMembreRecherche Le numéro du membre à chercher
  * @return Le membre trouvé ou un membre "invalide" si non trouvé
  */
-Membre obtenirMembre(int numMembre) {
-    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r+");
+Membre obtenirMembre(int numMembreRecherche) {
+    FILE* pTabMembres;
     Membre membreBD;
+    char ligne[256];
+    char* token;
+    char* pLigne;
 
-    // Initialisation d'un membre "invalide"
-    memset(&membreBD, 0, sizeof(membreBD));
-    membreBD.numMembre = 0;
-    strcpy(membreBD.nom, "");
-
-    if (pTabMembres != NULL) {
+    memset(&membreBD, 0, sizeof(Membre));
+    membreBD.numMembre = -1;
+    pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r");
+    if (pTabMembres == NULL) {
         return membreBD;
     }
 
-    while (fread(&membreBD, sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != numMembre);
+    fgets(ligne, sizeof(ligne), pTabMembres);
+    pLigne = ligne;
+    while (!feof(pTabMembres)) {
+        token = strtok(pLigne, "|");
+        membreBD.numMembre = atoi(token);
 
-    if (feof(pTabMembres)) {
-        fclose(pTabMembres);
-        // Réinitialiser à un membre "invalide"
-        memset(&membreBD, 0, sizeof(membreBD));
-        membreBD.numMembre = 0;
-        strcpy(membreBD.nom, "");
-        return membreBD;
+        token = strtok(NULL, "|");
+        strcpy(membreBD.nomPrenom, token);
+
+        token = strtok(NULL, "|");
+        strcpy(membreBD.adresse, token);
+
+        token = strtok(NULL, "|");
+        membreBD.dateAdhesion = atoi(token);
+
+        if (membreBD.numMembre == numMembreRecherche) {
+            fclose(pTabMembres);
+            return membreBD;
+        }
+
+        fgets(ligne, sizeof(ligne), pTabMembres);
+        pLigne = ligne;
     }
 
     fclose(pTabMembres);
+
+    memset(&membreBD, 0, sizeof(Membre));
+    membreBD.numMembre = -1;
     return membreBD;
 }
 
@@ -452,7 +511,12 @@ bool insererMembre(Membre membreAjout) {
         return false;
     }
 
-    fwrite(&membreAjout, sizeof(membreAjout), 1, pTabMembres);
+    fprintf(pTabMembres, "%d|%s|%s|%d\n",
+            membreAjout.numMembre,
+            membreAjout.nomPrenom,
+            membreAjout.adresse,
+            membreAjout.dateAdhesion);
+
     fclose(pTabMembres);
     return true;
 }
@@ -463,25 +527,40 @@ bool insererMembre(Membre membreAjout) {
  * @return true si la suppression a réussi, false sinon
  */
 bool supprimerMembre(int numMembre) {
-    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r+");
-    Membre membreBD;
+    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r");
+    FILE* pTemp = fopen("temp.txt", "w");
+    char ligne[256];
+    bool membreSupprime = false;
 
-    if (pTabMembres == NULL) {
+    if (pTabMembres == NULL || pTemp == NULL) {
+        if (pTabMembres) fclose(pTabMembres);
+        if (pTemp) fclose(pTemp);
         return false;
     }
 
-    while (fread(&membreBD, sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != numMembre);
+    while (fgets(ligne, sizeof(ligne), pTabMembres)) {
+        int numMembreLigne;
+        sscanf(ligne, "%d|", &numMembreLigne);
 
-    if (feof(pTabMembres)) {
-        fclose(pTabMembres);
-        return false;
+        if (numMembreLigne != numMembre) {
+            fputs(ligne, pTemp);
+        } else {
+            membreSupprime = true;
+        }
     }
 
-    strcpy(membreBD.nom, "***");
-    fseek(pTabMembres, -1 * (long)sizeof(membreBD), SEEK_CUR);
-    fwrite(&membreBD, sizeof(membreBD), 1, pTabMembres);
     fclose(pTabMembres);
-    return true;
+    fclose(pTemp);
+
+    if (membreSupprime) {
+        if (remove(NOM_FICHIER_MEMBRES) != 0 || rename("temp.txt", NOM_FICHIER_MEMBRES) != 0) {
+            return false;
+        }
+    } else {
+        remove("temp.txt");
+    }
+
+    return membreSupprime;
 }
 
 /**
@@ -490,22 +569,142 @@ bool supprimerMembre(int numMembre) {
  * @return true si la modification a réussi, false sinon
  */
 bool modifierMembre(Membre membre) {
-    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r+");
-    Membre membreBD;
+    FILE* pTabMembres = fopen(NOM_FICHIER_MEMBRES, "r");
+    FILE* pTemp = fopen("temp.txt", "w");
+    char ligne[256];
+    bool membreModifie = false;
 
-    if (pTabMembres == NULL) {
+    if (pTabMembres == NULL || pTemp == NULL) {
+        if (pTabMembres) fclose(pTabMembres);
+        if (pTemp) fclose(pTemp);
         return false;
     }
 
-    while (fread(&membreBD, sizeof(membreBD), 1, pTabMembres) != 0 && membreBD.numMembre != membre.numMembre);
+    while (fgets(ligne, sizeof(ligne), pTabMembres)) {
+        int numMembreLigne;
+        sscanf(ligne, "%d|", &numMembreLigne);
 
-    if (feof(pTabMembres)) {
-        fclose(pTabMembres);
-        return false;
+        if (numMembreLigne == membre.numMembre) {
+            fprintf(pTemp, "%d|%s|%s|%d\n",
+                    membre.numMembre,
+                    membre.nomPrenom,
+                    membre.adresse,
+                    membre.dateAdhesion);
+            membreModifie = true;
+        } else {
+            fputs(ligne, pTemp);
+        }
     }
 
-    fseek(pTabMembres, -1 * (long)sizeof(membreBD), SEEK_CUR);
-    fwrite(&membre, sizeof(membre), 1, pTabMembres);
     fclose(pTabMembres);
-    return true;
+    fclose(pTemp);
+
+    if (membreModifie) {
+        if (remove(NOM_FICHIER_MEMBRES) != 0 || rename("temp.txt", NOM_FICHIER_MEMBRES) != 0) {
+            return false;
+        }
+    } else {
+        remove("temp.txt");
+    }
+
+    return membreModifie;
+}
+
+
+
+
+/**
+ * Calcule le nombre de jours entre deux dates au format YYYYMMDD
+ * @param dateStartYYYYMMDD La date de début au format YYYYMMDD
+ * @param dateEndYYYYMMDD La date de fin au format YYYYMMDD
+ * @return Le nombre de jours entre les deux dates
+ */
+int calculerNbJours(int dateStartYYYYMMDD, int dateEndYYYYMMDD) {
+	time_t now;
+	struct tm date1;
+	struct tm date2;
+	double seconds;
+	int extractedDay;
+	int extractedMonth;
+	int extractedYear;
+
+	time(&now);
+
+	date1 = *localtime(&now);
+	date2 = *localtime(&now);
+
+
+    extractedYear = extraireAnneeYYYYDepuisDateYYYYMMDD(dateStartYYYYMMDD);
+    extractedMonth = extraireMoisMMDepuisDateYYYYMMDD(dateStartYYYYMMDD);
+    extractedDay = extraireJourDDDepuisDateYYYYMMDD(dateStartYYYYMMDD);
+	date1.tm_hour = 0;
+	date1.tm_min = 0;
+	date1.tm_sec = 0;
+	date1.tm_mon = extractedMonth - 1;
+	date1.tm_mday = extractedDay;
+	date1.tm_year = extractedYear - 1900;
+
+
+    extractedYear = extraireAnneeYYYYDepuisDateYYYYMMDD(dateEndYYYYMMDD);
+    extractedMonth = extraireMoisMMDepuisDateYYYYMMDD(dateEndYYYYMMDD);
+    extractedDay = extraireJourDDDepuisDateYYYYMMDD(dateEndYYYYMMDD);
+	date2.tm_hour = 0;
+	date2.tm_min = 0;
+	date2.tm_sec = 0;
+	date2.tm_mon = extractedMonth - 1;
+	date2.tm_mday = extractedDay;
+	date2.tm_year = extractedYear - 1900;
+
+	seconds = difftime(mktime(&date2), mktime(&date1));
+
+	return seconds / 86400;
+}
+
+/**
+ * Donne la date actuelle du système au format YYYYMMDD
+ * @return La date actuelle au format YYYYMMDD
+ */
+int obtenirDateYYYYMMDDDuSysteme(void) {
+	time_t now;
+	struct tm *current_date;
+	char buffer[9];
+	int dateYYYYMMDD;
+
+	time(&now);
+	current_date = localtime(&now);
+	strftime(buffer, 9, "%Y%m%d", current_date);
+	dateYYYYMMDD = atoi(buffer);
+	return dateYYYYMMDD;
+}
+
+
+/**
+ * Extrait l'année d'une date au format YYYYMMDD
+ * @param date La date au format YYYYMMDD
+ * @return L'année extraite
+ */
+int extraireAnneeYYYYDepuisDateYYYYMMDD(int date) {
+	return date / 10000;
+}
+
+/**
+ * Extrait le mois d'une date au format YYYYMMDD
+ * @param date La date au format YYYYMMDD
+ * @return Le mois extrait
+ */
+int extraireMoisMMDepuisDateYYYYMMDD(int date) {
+	int year = date / 10000;
+	return (date - (year * 10000)) / 100;
+
+}
+
+/**
+ * Extrait le jour d'une date au format YYYYMMDD
+ * @param date La date au format YYYYMMDD
+ * @return Le jour extrait
+ */
+int extraireJourDDDepuisDateYYYYMMDD(int date) {
+	int year = date / 10000;
+	int month = (date - (year * 10000)) / 100;
+	return (date - (year * 10000) - month * 100);
 }
