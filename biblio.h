@@ -30,45 +30,14 @@
 
 
 #define TAILLE_ISBN 11
-#define TAILLE_TITRE 100
-#define TAILLE_AUTEUR 100
-#define TAILLE_EDITEUR 50
-#define TAILLE_NOM 100
-#define TAILLE_PRENOM 100
-#define TAILLE_ADRESSE 100
 
 #define NOM_FICHIER_EMPRUNTS "emprunts.txt"
 #define NOM_FICHIER_MEMBRES "membres.txt"
 #define NOM_FICHIER_LIVRES "ouvrages.txt"
 
 
+// Insérer les structures ici
 
-
-struct livre {
-    char isbn[TAILLE_ISBN];
-    char titre[TAILLE_TITRE];
-    char auteur[TAILLE_AUTEUR];
-    int anneeParution;
-    char editeur[TAILLE_EDITEUR];
-};
-
-typedef struct livre Livre;
-
-struct emprunt {
-    int dateEmprunt;
-    int numMembre;
-    char isbn[TAILLE_ISBN];
-};
-
-typedef struct emprunt Emprunt;
-
-struct membre {
-    int numMembre;
-    char nomPrenom[TAILLE_NOM];
-    char adresse[TAILLE_ADRESSE];
-    int dateAdhesion;
-};
-typedef struct membre Membre;
 
 bool ouvertureFichiers(void);
 int obtenirAnneeActuelle(void);
@@ -122,6 +91,56 @@ bool ouvertureFichiers(void) {
     fclose(pTabLivres);
     return true;
 };
+
+/**
+ * Rempli un tableau de livres à partir du fichier des livres
+ * @param livres un tableau de livres vide
+ */
+void obtenirListeLivres(Livre livres[]) {
+    FILE* pTabLivres;
+    Livre livreBD;
+    char ligne[256];
+    char* token;
+    char* pLigne;
+    int iLivre = 0;
+
+    memset(&livreBD, 0, sizeof(Livre));
+    strcpy(livreBD.isbn, "");
+    pTabLivres = fopen(NOM_FICHIER_LIVRES, "r");
+    if (pTabLivres == NULL) {
+        return livreBD;
+    }
+    fgets(ligne, sizeof(ligne), pTabLivres);
+    pLigne = ligne;
+    while (!feof(pTabLivres)) {
+
+        token = strtok(pLigne, "|");
+        strcpy(livreBD.isbn, token);
+
+        token = strtok(NULL, "|");
+        strcpy(livreBD.titre, token);
+
+        token = strtok(NULL, "|");
+        strcpy(livreBD.auteur, token);
+
+        token = strtok(NULL, "|");
+        livreBD.anneeParution = atoi(token);
+
+        token = strtok(NULL, "|");
+        strcpy(livreBD.editeur, token);
+
+        livres[iLivre] = livreBD;
+        iLivre++;
+        fgets(ligne, sizeof(ligne), pTabLivres);
+        pLigne = ligne;
+    }
+
+    fclose(pTabLivres);
+
+    memset(&livreBD, 0, sizeof(Livre));
+    strcpy(livreBD.isbn, "");
+    return livreBD;
+}
 
 
 /**
