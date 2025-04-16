@@ -104,12 +104,9 @@ void obtenirListeLivres(Livre livres[]) {
     char* pLigne;
     int iLivre = 0;
 
-    memset(&livreBD, 0, sizeof(Livre));
-    strcpy(livreBD.isbn, "");
     pTabLivres = fopen(NOM_FICHIER_LIVRES, "r");
-    if (pTabLivres == NULL) {
-        return livreBD;
-    }
+    if (pTabLivres != NULL) {
+    
     fgets(ligne, sizeof(ligne), pTabLivres);
     pLigne = ligne;
     while (!feof(pTabLivres)) {
@@ -134,12 +131,9 @@ void obtenirListeLivres(Livre livres[]) {
         fgets(ligne, sizeof(ligne), pTabLivres);
         pLigne = ligne;
     }
-
+}
     fclose(pTabLivres);
-
-    memset(&livreBD, 0, sizeof(Livre));
-    strcpy(livreBD.isbn, "");
-    return livreBD;
+    
 }
 
 
