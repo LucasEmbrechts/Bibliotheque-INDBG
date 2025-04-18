@@ -41,6 +41,7 @@
 
 bool ouvertureFichiers(void);
 int obtenirAnneeActuelle(void);
+void obtenirListeLivres(Livre livres[]);
 Livre obtenirLivre(char isbn[]);
 bool insererLivre(Livre livreAjout);
 bool supprimerLivre(char isbn[]);
