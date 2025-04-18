@@ -96,6 +96,7 @@ bool ouvertureFichiers(void) {
 /**
  * Rempli un tableau de livres à partir du fichier des livres
  * @param livres un tableau de livres vide
+ * @return Le nombre de livres dans le tableau
  */
 int obtenirListeLivres(Livre livres[]) {
     FILE* pTabLivres;
