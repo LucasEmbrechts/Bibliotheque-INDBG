@@ -41,7 +41,7 @@
 
 bool ouvertureFichiers(void);
 int obtenirAnneeActuelle(void);
-void obtenirListeLivres(Livre livres[]);
+int obtenirListeLivres(Livre livres[]);
 Livre obtenirLivre(char isbn[]);
 bool insererLivre(Livre livreAjout);
 bool supprimerLivre(char isbn[]);
@@ -97,8 +97,9 @@ bool ouvertureFichiers(void) {
  * Rempli un tableau de livres à partir du fichier des livres
  * @param livres un tableau de livres vide
  */
-void obtenirListeLivres(Livre livres[]) {
+int obtenirListeLivres(Livre livres[]) {
     FILE* pTabLivres;
+	int nbLivres = 0;
     Livre livreBD;
     char ligne[256];
     char* token;
@@ -131,9 +132,11 @@ void obtenirListeLivres(Livre livres[]) {
         iLivre++;
         fgets(ligne, sizeof(ligne), pTabLivres);
         pLigne = ligne;
+	    nbLivres++;
     }
 }
     fclose(pTabLivres);
+	return nbLivres;
     
 }
 
