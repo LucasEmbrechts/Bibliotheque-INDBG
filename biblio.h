@@ -143,7 +143,7 @@ int obtenirListeLivres(Livre livres[]) {
 
 
 /**
- * Obtient un emprunt à partir de l'ISBN et du numéro de membre
+ * Obtient un livre à partir de l'ISBN
  * @param isbn L'ISBN du livre recherché
  * @return Le livre recherché
  */
