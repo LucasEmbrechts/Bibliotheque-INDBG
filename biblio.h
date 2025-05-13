@@ -42,6 +42,7 @@
 bool ouvertureFichiers(void);
 int obtenirAnneeActuelle(void);
 int obtenirListeLivres(Livre livres[]);
+int obtenirListeEmprunts(Emprunt emprunts[]);
 Livre obtenirLivre(char isbn[]);
 bool insererLivre(Livre livreAjout);
 bool supprimerLivre(char isbn[]);
@@ -141,6 +142,47 @@ int obtenirListeLivres(Livre livres[]) {
     
 }
 
+/**
+ * Rempli un tableau de emprunts à partir du fichier des emprunts
+ * @param emprunts un tableau de emprunts vide
+ * @return Le nombre de emprunts dans le tableau
+ */
+int obtenirListeEmprunts(Emprunt emprunts[]) {
+    FILE* pTabLivres;
+    int nbLivres = 0;
+    Emprunt livreBD;
+    char ligne[256];
+    char* token;
+    char* pLigne;
+    int iLivre = 0;
+
+    pTabLivres = fopen(NOM_FICHIER_EMPRUNTS, "r");
+    if (pTabLivres != NULL) {
+    
+    fgets(ligne, sizeof(ligne), pTabLivres);
+    pLigne = ligne;
+    while (!feof(pTabLivres)) {
+
+        token = strtok(pLigne, "|");
+        strcpy(livreBD.isbn, token);
+	    
+        token = strtok(NULL, "|");
+        livreBD.dateEmprunt = atoi(token);
+	    
+        token = strtok(NULL, "|");
+        strcpy(livreBD.numMembre, token);
+
+        livres[iLivre] = livreBD;
+        iLivre++;
+        fgets(ligne, sizeof(ligne), pTabLivres);
+        pLigne = ligne;
+	nbLivres++;
+    }
+}
+    fclose(pTabLivres);
+	return nbLivres;
+    
+}
 
 /**
  * Obtient un livre à partir de l'ISBN
