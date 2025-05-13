@@ -172,7 +172,7 @@ int obtenirListeEmprunts(Emprunt emprunts[]) {
         token = strtok(NULL, "|");
         strcpy(livreBD.numMembre, token);
 
-        livres[iLivre] = livreBD;
+        emprunts[iLivre] = livreBD;
         iLivre++;
         fgets(ligne, sizeof(ligne), pTabLivres);
         pLigne = ligne;
