@@ -29,14 +29,47 @@
 #include <stdint.h>
 
 
-#define TAILLE_ISBN 11
-
 #define NOM_FICHIER_EMPRUNTS "emprunts.txt"
 #define NOM_FICHIER_MEMBRES "membres.txt"
 #define NOM_FICHIER_LIVRES "ouvrages.txt"
 
 
-// Insérer les structures ici
+#define TAILLE_ISBN 11
+#define TAILLE_TITRE 100
+#define TAILLE_AUTEUR 100
+#define TAILLE_EDITEUR 50
+#define TAILLE_NOM 100
+#define TAILLE_PRENOM 100
+#define TAILLE_ADRESSE 100
+
+
+
+
+struct livre {
+    char isbn[TAILLE_ISBN];
+    char titre[TAILLE_TITRE];
+    char auteur[TAILLE_AUTEUR];
+    int anneeParution;
+    char editeur[TAILLE_EDITEUR];
+};
+
+typedef struct livre Livre;
+
+struct emprunt {
+    int dateEmprunt;
+    int numMembre;
+    char isbn[TAILLE_ISBN];
+};
+
+typedef struct emprunt Emprunt;
+
+struct membre {
+    int numMembre;
+    char nomPrenom[TAILLE_NOM];
+    char adresse[TAILLE_ADRESSE];
+    int dateAdhesion;
+};
+typedef struct membre Membre;
 
 
 bool ouvertureFichiers(void);
@@ -187,7 +220,7 @@ int obtenirListeEmprunts(Emprunt emprunts[]) {
 /**
  * Obtient un livre à partir de l'ISBN
  * @param isbn L'ISBN du livre recherché
- * @return Le livre recherché
+ * @return Le livre recherché ou un livre "invalide" si non trouvé (isbn vide)
  */
 Livre obtenirLivre(char isbnRecherche[]) {
     FILE* pTabLivres;
