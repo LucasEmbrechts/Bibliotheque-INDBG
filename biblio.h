@@ -237,7 +237,7 @@ Livre obtenirLivre(char isbnRecherche[]) {
 }
 
 /**
- * Obtient un emprunt à partir de l'ISBN et du numéro de membre
+ * Insère un nouveau livre dans le fichier des livres
  * @param livreAjout Le livre à ajouter
  * @return true si l'insertion a réussi, false sinon
  */
@@ -258,8 +258,8 @@ bool insererLivre(Livre livreAjout) {
 }
 
 /**
- * Supprime un emprunt du fichier des emprunts
- * @param isbn L'ISBN du livre emprunté
+ * Supprime un livre du fichier des livres
+ * @param isbn L'ISBN du livre à supprimer
  * @return true si la suppression a réussi, false sinon
  */
 bool supprimerLivre(char isbn[]) {
@@ -299,7 +299,7 @@ bool supprimerLivre(char isbn[]) {
     return livreSupprime;
 }
 /**
- * Modifie un emprunt dans le fichier des emprunts
+ * Modifie un livre dans le fichier des livres
  * @param livre le livre modifié
  * @return true si la modification a réussi, false sinon
  */
@@ -348,9 +348,9 @@ bool modifierLivre(Livre livre) {
 
 /**
  * Obtient un emprunt à partir de l'ISBN et du numéro de membre
- * @param isbn L'ISBN du livre emprunté
- * @param numMembre Le numéro du membre qui a emprunté le livre
- * @return L'emprunt trouvé ou un emprunt "invalide" si non trouvé
+ * @param isbnRecherche L'ISBN du livre emprunté
+ * @param numMembreRecherche Le numéro du membre qui a emprunté le livre
+ * @return L'emprunt trouvé ou un emprunt "invalide" si non trouvé (isbn vide et numMembre = -1)
  */
 Emprunt obtenirEmprunt(char isbnRecherche[], int numMembreRecherche) {
     FILE* pTabEmprunts;
@@ -512,7 +512,7 @@ bool modifierEmprunt(Emprunt emprunt) {
 /**
  * Obtient un membre à partir de son numéro
  * @param numMembreRecherche Le numéro du membre à chercher
- * @return Le membre trouvé ou un membre "invalide" si non trouvé
+ * @return Le membre trouvé ou un membre "invalide" si non trouvé (numMembre = -1)
  */
 Membre obtenirMembre(int numMembreRecherche) {
     FILE* pTabMembres;
