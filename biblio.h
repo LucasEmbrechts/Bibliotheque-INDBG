@@ -8,7 +8,7 @@
 * insérer, supprimer et modifier des livres, emprunts et membres,
 * ainsi que des fonctions utilitaires pour manipuler des dates.
 * @author Lucas Embrechts
-* @date 2025-04-13
+* @date 2025-05-14
 * @note Les fichiers utilisés sont : emprunts.txt, membres.txt et ouvrages.txt.
 * @note Le fichier ouvrages.txt est structuré de la manière suivante :
 *       isbn|titre|auteur|anneeParution|editeur
@@ -76,6 +76,7 @@ bool ouvertureFichiers(void);
 int obtenirAnneeActuelle(void);
 int obtenirListeLivres(Livre livres[]);
 int obtenirListeEmprunts(Emprunt emprunts[]);
+int obtenirListeMembres(Membre membres[]);
 Livre obtenirLivre(char isbn[]);
 bool insererLivre(Livre livreAjout);
 bool supprimerLivre(char isbn[]);
@@ -215,6 +216,50 @@ int obtenirListeEmprunts(Emprunt emprunts[]) {
     fclose(pTabLivres);
 	return nbLivres;
     
+}
+
+/**
+ * Rempli un tableau de membres à partir du fichier des membres
+ * @param membres un tableau de membres vide
+ * @return Le nombre de membres dans le tableau
+ */
+int obtenirListeMembres(Membre membres[]){
+    FILE* pTabLivres;
+    int nbLivres = 0;
+    Membre membreBD;
+    char ligne[256];
+    char* token;
+    char* pLigne;
+    int iLivre = 0;
+
+    pTabLivres = fopen(NOM_FICHIER_MEMBRES, "r");
+    if (pTabLivres != NULL) {
+    
+    fgets(ligne, sizeof(ligne), pTabLivres);
+    pLigne = ligne;
+    while (!feof(pTabLivres)) {
+
+        token = strtok(pLigne, "|");
+        membreBD.numMembre = atoi(token);
+
+        token = strtok(NULL, "|");
+        strcpy(membreBD.nomPrenom, token);
+
+        token = strtok(NULL, "|");
+        strcpy(membreBD.adresse, token);
+
+        token = strtok(NULL, "|");
+        membreBD.dateAdhesion = atoi(token);
+
+        membres[iLivre] = membreBD;
+        iLivre++;
+        fgets(ligne, sizeof(ligne), pTabLivres);
+        pLigne = ligne;
+	    nbLivres++;
+    }
+}
+    fclose(pTabLivres);
+	return nbLivres;
 }
 
 /**
