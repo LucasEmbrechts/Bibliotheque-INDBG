@@ -201,10 +201,10 @@ int obtenirListeEmprunts(Emprunt emprunts[]) {
         strcpy(livreBD.isbn, token);
 	    
         token = strtok(NULL, "|");
-        livreBD.dateEmprunt = atoi(token);
-	    
-        token = strtok(NULL, "|");
         livreBD.numMembre = atoi(token);
+
+        token = strtok(NULL, "|");
+        livreBD.dateEmprunt = atoi(token);
 
         emprunts[iLivre] = livreBD;
         iLivre++;
