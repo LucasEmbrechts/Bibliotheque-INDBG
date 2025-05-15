@@ -73,7 +73,6 @@ typedef struct membre Membre;
 
 
 bool ouvertureFichiers(void);
-int obtenirAnneeActuelle(void);
 int obtenirListeLivres(Livre livres[]);
 int obtenirListeEmprunts(Emprunt emprunts[]);
 int obtenirListeMembres(Membre membres[]);
@@ -94,7 +93,7 @@ int calculerNbJours(int dateStartYYYYMMDD, int dateEndYYYYMMDD);
 int extraireJourDDDepuisDateYYYYMMDD(int date);
 int extraireMoisMMDepuisDateYYYYMMDD(int date);
 int extraireAnneeYYYYDepuisDateYYYYMMDD(int date);
-
+int obtenirDateYYYYMMDDDuSysteme(void);
 
 bool ouvertureFichiers(void) {
 
