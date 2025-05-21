@@ -397,7 +397,7 @@ bool modifierLivre(Livre livre) {
         sscanf(ligne, "%[^|]", isbnLigne);
 
         if (strcmp(isbnLigne, livre.isbn) == 0) {
-            fprintf(pTemp, "%s|%s|%s|%d|%s",
+            fprintf(pTemp, "%s|%s|%s|%d|%s\n",
                     livre.isbn,
                     livre.titre,
                     livre.auteur,
@@ -562,7 +562,7 @@ bool modifierEmprunt(Emprunt emprunt) {
         sscanf(ligne, "%[^|]|%d|", isbnLigne, &numMembreLigne);
 
         if (strcmp(isbnLigne, emprunt.isbn) == 0 && numMembreLigne == emprunt.numMembre) {
-            fprintf(pTemp, "%s|%d|%d",
+            fprintf(pTemp, "%s|%d|%d\n",
                     emprunt.isbn,
                     emprunt.numMembre,
                     emprunt.dateEmprunt);
@@ -722,7 +722,7 @@ bool modifierMembre(Membre membre) {
         sscanf(ligne, "%d|", &numMembreLigne);
 
         if (numMembreLigne == membre.numMembre) {
-            fprintf(pTemp, "%d|%s|%s|%d",
+            fprintf(pTemp, "%d|%s|%s|%d\n",
                     membre.numMembre,
                     membre.nomPrenom,
                     membre.adresse,
